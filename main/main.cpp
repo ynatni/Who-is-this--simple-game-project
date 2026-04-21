@@ -1,14 +1,3 @@
-/*
-Deskripsi: kamu adalah seorang detektif yang ditugasi untuk 
-menyelesaikan kasus pembunuhan di kota Greyford City. 
-oleh seorang korban bernama Sheryl iris . 
-terdapat 5 terduga tersangka yang harus diselidiki berdasarkan 
-data dalam kasus.
-
-terdapat 2 quest untuk menyelesaikan game ini:
-1. analisis dan ceklist pada keadaan yang tepat deskripsi
-2. memilih pelaku
-*/
 
 // library 
 // library khusus game raylib
@@ -197,17 +186,27 @@ namespace StackNS {
 // QUEUE
 // menyimpan log pesan / event
 namespace QueueNS {
+    // antrian 
     struct Queue {
+        // tempat penyimpanan data
+        // vector = array dinamis; string = isi datanya
         std::vector<std::string> data;
-        void enqueue(const std::string& msg) {
+        // menambah data antrian dengan memasukan dari belakang
+        void enqueue(const std::string& msg ) { // parameter teks yang mau dimasukkan
+            //  jumlah isi sekarang dimana cuma 10 data lalu tambah ke belakang, kalau data penuh tidak ditambahkan
             if (data.size() < 10) data.push_back(msg);
         }
+        // fungsi untuk mengambil dan menghapus data paling depan 
         std::string dequeue() {
+            // cek apakah data kosong, jika iya error (throw)
             if (data.empty()) throw std::underflow_error("Queue is empty!");
+            // ambil data paling depan tanpa hapus
             std::string msg = data.front();
+            // happus elemen pertama di vector
             data.erase(data.begin());
             return msg;
         }
+        // mengecek apakah antrian kosong
         bool empty() { return data.empty(); }
         std::string front() { return data.empty() ? "" : data.front(); }
     };
@@ -320,11 +319,13 @@ T MaxValue(T a, T b) {
 }
 // main 
 // overloading drawpanel
+// menggambar kotak dan kasih border
 void DrawPanel(Rectangle rect, Color bg, Color border) {
     DrawRectangleRec(rect, bg);
     DrawRectangleLinesEx(rect, 1.5f, border);
 }
 
+// menggambar kotak menggunakan title dan ukuran font
 void DrawPanel(Rectangle rect, Color bg, Color border,
                const char* title, int titleSize) {
     DrawRectangleRec(rect, bg);
@@ -335,6 +336,7 @@ void DrawPanel(Rectangle rect, Color bg, Color border,
              Colors::PANEL_BORDER);
 }
 
+// menggambar kotak dengan icon dan title
 void DrawPanel(Rectangle rect, Color bg, Color border,
                const char* title, int titleSize, const char* icon) {
     DrawRectangleRec(rect, bg);
@@ -348,6 +350,7 @@ void DrawPanel(Rectangle rect, Color bg, Color border,
 }
 
 // overloading drawbutton
+// menggambar normal draw button
 bool DrawButton(Rectangle rect, const char* label, int fontSize) {
     bool  hover   = IsMouseOverRect(rect);
     bool  pressed = hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
@@ -363,7 +366,9 @@ bool DrawButton(Rectangle rect, const char* label, int fontSize) {
     return pressed;
 }
 
+// menggambar normal draw button dengan accent color ketika warna di klik, border berubah warna
 bool DrawButton(Rectangle rect, const char* label, int fontSize, Color accent) {
+    // logika untuk mengeklik tombol saat mouse berada di atas tombol
     bool  hover   = IsMouseOverRect(rect);
     bool  pressed = hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
     Color bg      = pressed ? accent
@@ -482,7 +487,7 @@ void DrawMainMenu() {
     DrawBackground();
     DrawTextCentered("WHO IS THIS?", 120, 70, Colors::ACCENT_GOLD);
     DrawTextCentered("GREYFORD CITY DETECTIVE BUREAU", 200, 18, Colors::TEXT_GREY);
-    DrawTextCentered("CASE C-420  |  THE MURDER OF SHERRYL IRIS (19)", 228, 14, Colors::TEXT_DIM);
+    DrawTextCentered("CASE C-420  |  THE MURDER OF SHERYL IRIS (19)", 228, 14, Colors::TEXT_DIM);
 
     DrawLine(200, 310, GameConfig::SCREEN_W - 200, 310, Colors::PANEL_BORDER);
     DrawLine(200, 312, GameConfig::SCREEN_W - 200, 312, Colors::ACCENT_GOLD);
@@ -514,13 +519,13 @@ void DrawIntro() {
 
     const char* lines[] = {
         "CASE ID  : C-420",
-        "TITLE    : The Murder of Sherryl Iris (19)",
+        "TITLE    : The Murder of Sheryl Iris (19)",
         "DATE     : September 30th, 2005",
         "LOCATION : Clest Residence Apartments, Greyford City",
         "EXACT    : Apartment #402, Kitchen",
         "",
         "On the evening of September 30, 2005, a murder occurred at the",
-        "Clest Residence Apartments. The victim was identified as Sherryl",
+        "Clest Residence Apartments. The victim was identified as Sheryl",
         "Iris, 19 years old. You are assigned as the lead detective.",
         "",
         "MISSION  : Analyze File A (Case Data) and File B (Suspects),",
@@ -576,7 +581,7 @@ void DrawGameplay(const std::vector<Suspect>& suspects, int idx,
         ay += 38;
     };
     rowA("CASE ID",   "C-420");
-    rowA("TITLE",     "The Murder of Sherryl Iris (19)");
+    rowA("TITLE",     "The Murder of Sheryl Iris (19)");
     rowA("DATE",      "September 30, 2005");
     rowA("LOCATION",  "Clest Residence Apt #402, Kitchen");
     rowA("WITNESS", "Male, 170-180cm, brown hair, fair skin,", Colors::ACCENT_GOLD);
@@ -703,7 +708,7 @@ void DrawChooseSuspect(const std::vector<Suspect>& suspects,
                        Texture2D suspectPhotos[]) {
     DrawBackground();
     DrawHeader("CHOOSE YOUR SUSPECT",
-               "Select who you believe committed the murder of Sherryl Iris");
+               "Select who you believe committed the murder of Sheryl Iris");
     DrawText("Review your investigation forms. Select the suspect you believe is guilty.",
              20, 100, 15, Colors::TEXT_GREY);
 
@@ -796,7 +801,7 @@ void DrawWin() {
     DrawTextCentered("Congratulations, Detective!", 200, 28, Colors::ACCENT_GOLD);
 
     DrawPanel({200, 260, 880, 290}, Colors::PANEL_BG, Colors::CORRECT_CLR);
-    DrawText("You identified RYAN (S-002) as the murderer of Sherryl Iris.", 230, 285, 17, Colors::TEXT_WHITE);
+    DrawText("You identified RYAN (S-002) as the murderer of Sheryl Iris.", 230, 285, 17, Colors::TEXT_WHITE);
     DrawText("EVIDENCE SUMMARY:", 230, 320, 13, Colors::TEXT_GREY);
     DrawText("- Secret cult member: matches cult stone chip evidence",        230, 344, 13, Colors::TEXT_WHITE);
     DrawText("- Fingerprints matched those found at the crime scene",         230, 362, 13, Colors::TEXT_WHITE);
@@ -823,7 +828,7 @@ void DrawLose() {
 
     DrawPanel({200, 260, 880, 260}, Colors::PANEL_BG, Colors::WRONG_CLR);
     DrawText("You failed to identify the true murderer.",                      230, 285, 17, Colors::TEXT_WHITE);
-    DrawText("The real killer, [REDACTED], has escaped justice.",              230, 320, 15, Colors::TEXT_GREY);
+    DrawText("The real killer, [----], has escaped justice.",              230, 320, 15, Colors::TEXT_GREY);
     DrawText("Key clues you may have missed:", 230, 358, 13, Colors::TEXT_GREY);
     DrawText("- Secret cult membership links to stone chip evidence",          230, 380, 13, Colors::TEXT_WHITE);
     DrawText("- Ryan refused to reveal alibi destination",                     230, 398, 13, Colors::TEXT_WHITE);
@@ -851,7 +856,7 @@ void DrawCredits() {
     int my = 250;
     DrawText("WHO IS THIS? - Detective Game", 340, my, 16, Colors::TEXT_WHITE);  my += 34;
     DrawLine(340, my, 960, my, Colors::PANEL_BORDER);                             my += 18;
-    DrawText("Developed by Kelompok 7", 340, my, 15, Colors::ACCENT_GOLD);        my += 36;
+    DrawText("Developed by:", 340, my, 15, Colors::ACCENT_GOLD);        my += 36;
 
     const char* roles[] = {
         "2510511040 - Farika Aulia Putri",
@@ -937,7 +942,7 @@ int main() {
 
     state->messageLog->enqueue("Investigation started. Case C-420 opened.");
 
-    // ==== GAME LOOP ====
+    // GAME LOOP 
     while (!WindowShouldClose() && !state->shouldExit) {
         state->timer += GetFrameTime();
 
