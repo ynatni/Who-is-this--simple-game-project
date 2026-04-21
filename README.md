@@ -3,8 +3,9 @@ adalah sebuah project game kecil untuk Ujian Tengah Semester yang dibuat oleh ke
 1. Algoritma dan pemrograman 
 2. Praktikum Algoritma dan Pemrograman
 3. Struktur data
-4. Praktikum struktur data
-disini kamu menjadi seorang detektif yang ditugasi untuk menyelesaikan kasus pembunuhan di kota Greyford City oleh seorang korban bernama Sheryl iris . 
+4. Praktikum struktur data .
+
+Disini kamu menjadi seorang detektif yang ditugasi untuk menyelesaikan kasus pembunuhan di kota Greyford City oleh seorang korban bernama Sheryl iris . 
 Terdapat 5 terduga tersangka yang harus diselidiki berdasarkan data dalam kasus.
 
 Terdapat 2 quest untuk menyelesaikan game ini:
