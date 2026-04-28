@@ -21,9 +21,10 @@ Apakah kamu bisa menemukan pelaku sebenarnya dan menegakkan keadilan?
 
 Cara menjalankan Game:
 Opsi 1: File executable
-1. Unduh file WhoIsThis.exe
+1. Unduh file WhoIsThis.zip pada release
 2. Pastikan dependency sudah tersedia (jika diperlukan)
-3. Jalankan file tersebut
+3. Extract seluruh file
+4. Jalankan file tersebut
 
 Opsi 2: Melalui source code 
 1. Install Raylib dari website resmi: https://www.raylib.com/
@@ -41,5 +42,5 @@ Tim Pengembang:
 
 Kontak
 
-Bila ada pertanyaan, silahkan hubungi:
+Bila ada pertanyaan, bug, atau masukan silahkan hubungi:
 yusriyaturizki@gmail.com
