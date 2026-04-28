@@ -40,5 +40,6 @@ Tim Pengembang:
 5. Nur Izzati Zafira: Pembuatan flowcart sistem dan pembuatan laporan 
 
 Kontak
+
 Bila ada pertanyaan, silahkan hubungi:
 yusriyaturizki@gmail.com
