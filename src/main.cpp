@@ -1,21 +1,23 @@
 
 // library 
-// library khusus game raylib
+// library khusus raylib
 #include "raylib.h"
 // library untuk string
 #include <string>
 // library untuk array dinamis
 #include <vector>
-// library untuk error handling
+// library untuk error handling saat queue dan stack kosong
 #include <stdexcept>
 #include <iostream>
+// library untuk menggabungkan angka dan string
 #include <sstream>
 #include <algorithm>
+#include <functional>
 
 // namespace
-// mengelompokan variabel luar agar rapi
 using namespace std;
 
+// mengelompokan variabel luar agar rapi
 namespace GameConfig {
     // ukuran windows 
     const int SCREEN_W = 1280;
@@ -77,7 +79,7 @@ enum class Screen {
 // isi checklist investigasi 
 struct CheckItem {
     // teks pertanyaan
-    std::string label;  // mengecek apakah player sudah mencentang form nya
+    std::string label;  
     bool checked;  // mengecek apakah player sudah mencentang form nya
     bool correct;  // mengecek apakah ini jawaban yang benar
 };
@@ -317,6 +319,7 @@ template <typename T>
 T MaxValue(T a, T b) {
     return (a > b) ? a : b;
 }
+
 // main 
 // overloading drawpanel
 // menggambar kotak dan kasih border
@@ -384,6 +387,16 @@ bool DrawButton(Rectangle rect, const char* label, int fontSize, Color accent) {
     return pressed;
 }
 
+// CALLBACK FUNCTION
+bool DrawButton(Rectangle rect, const char* label, int fontSize, 
+                Color accent, std::function<void()> onClick) {
+    bool hover   = IsMouseOverRect(rect);
+    bool pressed = hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
+    if (pressed) onClick(); // callback
+    return pressed;
+}
+
+
 // suspect data
 std::vector<Suspect> InitSuspects() {
     std::vector<Suspect> s;
@@ -406,7 +419,7 @@ std::vector<Suspect> InitSuspects() {
          {"Fingerprints match crime scene?",                       false, true},
          {"Has connection to victim?",                             false, true},
          {"Alibi is unproven / suspicious?",                      false, true},
-         {"Evidence links (cult stone chips, fingerprints)?",     false, true}}});
+         {"Evidence links to suspect?",                           false, true}}});
 
     s.push_back({"S-003","Chris",19,"Male","1.8 m","University Student",
         "Ex of victim",
@@ -460,10 +473,9 @@ void DrawHeader(const char* title, const char* subtitle) {
     DrawLine(0, 88, GameConfig::SCREEN_W, 88, Colors::PANEL_BORDER);
 }
 
-// avatar: suspect character (ini  bakal diedit lagi)
+// avatar: suspect character
 void DrawSuspectAvatar(int idx, Texture2D textures[]) {
-   Rectangle av = {60, 145, 150, 150}; // <-- ganti di sini
-
+   Rectangle av = {60, 145, 150, 150}; 
     Texture2D tex = textures[idx];
 
     float size = (tex.width < tex.height) ? tex.width : tex.height;
@@ -567,8 +579,8 @@ void DrawGameplay(const std::vector<Suspect>& suspects, int idx,
              idx + 1, suspects[idx].name.c_str(), suspects[idx].id.c_str());
     DrawHeader("INVESTIGATION", hdr);
 
-    // contoh pemakaian template
-    int panelHeight = MaxValue(580, 580); // ambil nilai terbesar
+    // pemakaian template
+    int panelHeight = MaxValue(580, 580);
 
     // FILE A - kanan
     DrawPanel({820, 100, 430, 600}, Colors::PANEL_BG, Colors::PANEL_BORDER,
@@ -627,7 +639,7 @@ DrawText("CRIME SCENE FINGERPRINT:", 835, ay, 13, Colors::TEXT_GREY); ay += 18;
     DrawText("ALIBI:", 35, by2, 11, Colors::TEXT_DIM);                                  by2 += 16;
     DrawText(suspects[idx].alibi.c_str(), 35, by2, 12, Colors::ACCENT_GOLD);            by2 += 30;
 
-    // OCCUPATION di sini, setelah alibi
+    // OCCUPATION 
     DrawText("OCCUPATION:", 35, by2, 11, Colors::TEXT_DIM);            by2 += 16;
     std::string job = suspects[idx].job;
     size_t slash = job.find(" / ");
@@ -684,7 +696,7 @@ for (int i = 0; i < (int)suspects[idx].form.size(); i++) {
 
 // 1=next  -1=prev  0=none
 int GameplayInput(std::vector<Suspect>& suspects, int idx) {
-    // Checkbox toggle — koordinat disesuaikan dengan form di tengah
+    // Checkbox toggle koordinat disesuaikan dengan form di tengah
     int fy = 190;
     for (int i = 0; i < (int)suspects[idx].form.size(); i++) {
         if (IsMouseOverRect({425, (float)fy, 18, 18}) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
@@ -714,7 +726,7 @@ void DrawChooseSuspect(const std::vector<Suspect>& suspects,
 
     const int cardW  = 200, cardH = 300;
     const int startX = (GameConfig::SCREEN_W - (5 * cardW + 4 * 20)) / 2;
-    const int cardY  = 180; // <-- turun dari 130 ke 180
+    const int cardY  = 180;
 
     for (int i = 0; i < 5; i++) {
         int       cx   = startX + i * (cardW + 20);
@@ -951,24 +963,32 @@ int main() {
         try {
             switch (state->currentScreen) {
 
+                // callback function
                 case Screen::MAIN_MENU: {
-                    DrawMainMenu();
-                    int btn = MainMenuInput();
-                    if (btn == 1) {
-                        state->navHistory->push(Screen::MAIN_MENU);
-                        state->currentScreen       = Screen::INTRO;
-                        state->currentSuspectIndex = 0;
-                        state->selectedSuspect     = -1;
-                        for (auto& s : suspects)
-                            for (auto& f : s.form) f.checked = false;
-                    } else if (btn == 2) {
-                        state->navHistory->push(Screen::MAIN_MENU);
-                        state->currentScreen = Screen::CREDITS;
-                    } else if (btn == 3) {
-                        state->shouldExit = true;
-                    }
-                    break;
-                }
+                DrawMainMenu();
+
+                DrawButton({490, 340, 300, 56}, "[ START INVESTIGATION ]", 16, Colors::ACCENT_GOLD, [&]() {
+                    state->navHistory->push(Screen::MAIN_MENU);
+                    state->currentScreen = Screen::INTRO;
+                    state->currentSuspectIndex = 0;
+                    state->selectedSuspect = -1;
+
+                    for (auto& s : suspects)
+                        for (auto& f : s.form)
+                            f.checked = false;
+                });
+
+                DrawButton({490, 412, 300, 56}, "[ CREDITS ]", 16, Colors::ACCENT_GOLD, [&]() {
+                    state->navHistory->push(Screen::MAIN_MENU);
+                    state->currentScreen = Screen::CREDITS;
+                });
+
+                DrawButton({490, 484, 300, 56}, "[ EXIT ]", 16, Colors::ACCENT_RED, [&]() {
+                    state->shouldExit = true;
+                });
+
+                break;
+            }
 
                 case Screen::INTRO: {
                     DrawIntro();
@@ -1050,7 +1070,7 @@ int main() {
             }
 
         } catch (std::underflow_error&) {
-         // stack / queue kosong - lanjut saja
+         // stack / queue kosong
         } catch (std::runtime_error& e) {
         std::cerr << "Runtime error: " << e.what() << std::endl;
         state->currentScreen = Screen::MAIN_MENU;
